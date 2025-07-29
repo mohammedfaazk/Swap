@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Swap {
+  id               String  @id
+  initiator        String
+  resolver         String
+  amount           String
+  hashlock         String
+  timelock         Int
+  stellarAccount   String
+  state            String
+  enablePartialFill Boolean @default(false)
+  minimumFill      String?  @default(null)
+  filledAmount     String?  @default(null)
+  merkleRoot       String?  @default(null)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Resolver {
+  id              Int      @id @default(autoincrement())
+  address         String   @unique
+  endpoint        String
+  stake           String
+  reputation      Int
+  successfulSwaps Int      @default(0)
+  totalSwaps      Int      @default(0)
+  isAuthorized    Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PartialFill {
+  id           Int      @id @default(autoincrement())
+  swapId       String
+  resolver     String
+  fillAmount   String
+  secretIndex  Int
+  secret       String
+  createdAt    DateTime @default(now())
+}
