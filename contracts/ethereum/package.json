@@ -1,0 +1,30 @@
+{
+  "name": "@stellarbridge/ethereum-contracts",
+  "version": "1.0.0",
+  "description": "Revolutionary Ethereum smart contracts for cross-chain swaps",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy.ts --network mainnet",
+    "verify": "hardhat run scripts/verify.ts",
+    "setup-demo": "hardhat run scripts/setup-demo.ts",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "coverage": "hardhat coverage",
+    "gas-report": "REPORT_GAS=true hardhat test"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.3",
+    "@openzeppelin/contracts-upgradeable": "^4.9.3"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.2",
+    "@nomicfoundation/hardhat-verify": "^1.1.1",
+    "@typechain/hardhat": "^8.0.3",
+    "hardhat": "^2.17.3",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solhint": "^4.0.0",
+    "solidity-coverage": "^0.8.5",
+    "typescript": "^5.2.2"
+  }
+}
