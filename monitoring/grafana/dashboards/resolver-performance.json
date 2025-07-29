@@ -1,0 +1,33 @@
+{
+  "title": "Resolver Performance",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Active Resolvers",
+      "targets": [
+        {
+          "expr": "stellarbridge_active_resolvers"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Resolver Response Time",
+      "targets": [
+        {
+          "expr": "avg(stellarbridge_resolver_response_time)"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Top Resolvers",
+      "targets": [
+        {
+          "expr": "stellarbridge_resolver_metrics",
+          "format": "table"
+        }
+      ]
+    }
+  ]
+}

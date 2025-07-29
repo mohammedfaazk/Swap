@@ -1,0 +1,51 @@
+{
+  "title": "Swap Analytics",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Swaps",
+      "targets": [
+        {
+          "expr": "sum(stellarbridge_swaps_total)"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Successful Swaps",
+      "targets": [
+        {
+          "expr": "sum(stellarbridge_swaps_successful_total)"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Failed Swaps",
+      "targets": [
+        {
+          "expr": "sum(stellarbridge_swaps_failed_total)"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Swap Volume Over Time",
+      "targets": [
+        {
+          "expr": "rate(stellarbridge_swap_volume[5m])"
+        }
+      ],
+      "yaxes": [{ "format": "currencyUSD" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Average Completion Time (seconds)",
+      "targets": [
+        {
+          "expr": "avg(stellarbridge_swap_completion_time_seconds)"
+        }
+      ]
+    }
+  ]
+}

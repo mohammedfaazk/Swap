@@ -1,0 +1,42 @@
+{
+  "title": "System Metrics",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "CPU Usage",
+      "targets": [
+        {
+          "expr": "100 - (avg by(instance)(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU {{instance}}"
+        }
+      ],
+      "yaxes": [{ "format": "percent" }]
+    },
+    {
+      "type": "graph",
+      "title": "Memory Usage",
+      "targets": [
+        {
+          "expr": "(node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100",
+          "legendFormat": "Memory {{instance}}"
+        }
+      ],
+      "yaxes": [{ "format": "percent" }]
+    },
+    {
+      "type": "graph",
+      "title": "Disk I/O",
+      "targets": [
+        {
+          "expr": "rate(node_disk_read_bytes_total[5m])",
+          "legendFormat": "Read"
+        },
+        {
+          "expr": "rate(node_disk_written_bytes_total[5m])",
+          "legendFormat": "Write"
+        }
+      ],
+      "yaxes": [{ "format": "bytes" }]
+    }
+  ]
+}

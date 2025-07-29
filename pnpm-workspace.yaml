@@ -1,0 +1,7 @@
+# pnpm-workspace.yaml
+packages:
+  - "contracts/*"
+  - "relayer"
+  - "frontend"
+  - "mobile"
+  - "tests"
