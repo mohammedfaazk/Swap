@@ -6,38 +6,42 @@ async function main() {
 
   const [deployer] = await ethers.getSigners();
   console.log("Deploying with account:", deployer.address);
-  console.log("Account balance:", (await deployer.getBalance()).toString());
+  console.log("Account balance:", (await ethers.provider.getBalance(deployer.address)).toString());
 
   // Deploy ResolverRegistry first
   console.log("\n📋 Deploying ResolverRegistry...");
   const ResolverRegistry = await ethers.getContractFactory("ResolverRegistry");
   const resolverRegistry = await ResolverRegistry.deploy();
-  await resolverRegistry.deployed();
-  console.log("✅ ResolverRegistry deployed to:", resolverRegistry.address);
+  await resolverRegistry.waitForDeployment();
+  const resolverRegistryAddress = await resolverRegistry.getAddress();
+  console.log("✅ ResolverRegistry deployed to:", resolverRegistryAddress);
 
   // Deploy PartialFillManager
   console.log("\n🔄 Deploying PartialFillManager...");
   const PartialFillManager = await ethers.getContractFactory("PartialFillManager");
   const partialFillManager = await PartialFillManager.deploy();
-  await partialFillManager.deployed();
-  console.log("✅ PartialFillManager deployed to:", partialFillManager.address);
+  await partialFillManager.waitForDeployment();
+  const partialFillManagerAddress = await partialFillManager.getAddress();
+  console.log("✅ PartialFillManager deployed to:", partialFillManagerAddress);
 
   // Deploy main StellarBridgeFusionPlus contract
   console.log("\n🌟 Deploying StellarBridgeFusionPlus...");
   const StellarBridgeFusionPlus = await ethers.getContractFactory("StellarBridgeFusionPlus");
   const stellarBridge = await StellarBridgeFusionPlus.deploy(deployer.address); // Fee recipient
-  await stellarBridge.deployed();
-  console.log("✅ StellarBridgeFusionPlus deployed to:", stellarBridge.address);
+  await stellarBridge.waitForDeployment();
+  const stellarBridgeAddress = await stellarBridge.getAddress();
+  console.log("✅ StellarBridgeFusionPlus deployed to:", stellarBridgeAddress);
 
   // Save deployment addresses
+  const network = await ethers.provider.getNetwork();
   const deployments = {
-    network: (await ethers.provider.getNetwork()).name,
-    chainId: (await ethers.provider.getNetwork()).chainId,
+    network: network.name,
+    chainId: network.chainId,
     deployer: deployer.address,
     contracts: {
-      StellarBridgeFusionPlus: stellarBridge.address,
-      PartialFillManager: partialFillManager.address,
-      ResolverRegistry: resolverRegistry.address,
+      StellarBridgeFusionPlus: stellarBridgeAddress,
+      PartialFillManager: partialFillManagerAddress,
+      ResolverRegistry: resolverRegistryAddress,
     },
     timestamp: new Date().toISOString(),
     blockNumber: await ethers.provider.getBlockNumber(),
@@ -48,9 +52,9 @@ async function main() {
 
   // Verify contracts on block explorer
   console.log("\n🔍 Contract verification commands:");
-  console.log(`npx hardhat verify --network ${(await ethers.provider.getNetwork()).name} ${stellarBridge.address} "${deployer.address}"`);
-  console.log(`npx hardhat verify --network ${(await ethers.provider.getNetwork()).name} ${partialFillManager.address}`);
-  console.log(`npx hardhat verify --network ${(await ethers.provider.getNetwork()).name} ${resolverRegistry.address}`);
+  console.log(`npx hardhat verify --network ${network.name} ${stellarBridgeAddress} "${deployer.address}"`);
+  console.log(`npx hardhat verify --network ${network.name} ${partialFillManagerAddress}`);
+  console.log(`npx hardhat verify --network ${network.name} ${resolverRegistryAddress}`);
 
   console.log("\n🎉 Deployment completed successfully!");
 }

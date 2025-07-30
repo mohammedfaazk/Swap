@@ -10,35 +10,12 @@ import "./interfaces/IPartialFill.sol";
  */
 contract PartialFillManager is IPartialFill {
     
-    struct FillOrder {
-        bytes32 swapId;
-        address resolver;
-        uint256 amount;
-        uint256 bidPrice;
-        uint256 timestamp;
-        bytes32 merkleRoot;
-        bool executed;
-    }
-
-    struct DutchAuction {
-        uint256 startPrice;
-        uint256 reservePrice;
-        uint256 startTime;
-        uint256 duration;
-        uint256 currentPrice;
-        bool active;
-    }
-
     mapping(bytes32 => FillOrder[]) public fillOrders;
     mapping(bytes32 => DutchAuction) public auctions;
     mapping(bytes32 => mapping(address => bool)) public resolverBids;
 
     uint256 public constant AUCTION_DURATION = 300; // 5 minutes
     uint256 public constant MIN_BID_INCREMENT = 100; // 1%
-
-    event AuctionStarted(bytes32 indexed swapId, uint256 startPrice, uint256 reservePrice);
-    event BidPlaced(bytes32 indexed swapId, address indexed resolver, uint256 bidPrice);
-    event FillOrderExecuted(bytes32 indexed swapId, address indexed resolver, uint256 amount);
 
     /**
      * @dev Start Dutch auction for partial fill
@@ -79,7 +56,7 @@ contract PartialFillManager is IPartialFill {
 
         // Verify resolver eligibility via Merkle proof
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender, fillAmount));
-        require(MerkleProof.verify(merkleProof, auction.startPrice, leaf), "Invalid proof");
+        require(MerkleProof.verify(merkleProof, bytes32(auction.startPrice), leaf), "Invalid proof");
 
         resolverBids[swapId][msg.sender] = true;
 

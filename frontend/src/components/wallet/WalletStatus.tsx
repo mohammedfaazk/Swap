@@ -1,5 +1,11 @@
 import { useWallet } from "@/hooks/useWallet";
-export function WalletStatus() {
+import { FC } from 'react';
+
+export const WalletStatus: FC = () => {
   const { connected, address } = useWallet();
-  return <div>{connected ? Connected: ${address} : "Not connected"}</div>;
+  return (
+    <div>
+      {connected ? `Connected: ${address}` : "Not connected"}
+    </div>
+  );
 }

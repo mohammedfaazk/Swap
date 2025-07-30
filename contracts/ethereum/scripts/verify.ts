@@ -91,7 +91,7 @@ async function main() {
   console.log(`   ResolverRegistry: ${deploymentInfo.resolverRegistry}`);
   console.log("\n🔗 View on Etherscan:");
   
-  const etherscanBaseUrl = getEtherscanUrl(network.chainId);
+  const etherscanBaseUrl = getEtherscanUrl(Number(network.chainId));
   if (etherscanBaseUrl) {
     console.log(`   StellarBridge: ${etherscanBaseUrl}/address/${deploymentInfo.stellarBridge}`);
     console.log(`   PartialFillManager: ${etherscanBaseUrl}/address/${deploymentInfo.partialFillManager}`);

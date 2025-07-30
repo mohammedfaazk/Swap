@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 interface ResolverOrder { orderId: number|string; fromToken:string; toToken:string; amount:number; }
 interface ResolverAuction { details: string; }
 interface State {

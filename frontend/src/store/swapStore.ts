@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import type { SwapOrder } from "@/types/swap";
 interface State {
   activeSwaps: any[];
