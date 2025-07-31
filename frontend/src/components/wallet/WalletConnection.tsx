@@ -1,3 +1,5 @@
+"use client";
+
 import { useWallet } from "@/hooks/useWallet";
 import { Button } from "../ui/button";
 export function WalletConnection() {

@@ -3,5 +3,3 @@ packages:
   - "contracts/*"
   - "relayer"
   - "frontend"
-  - "mobile"
-  - "tests"

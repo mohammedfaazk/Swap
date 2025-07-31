@@ -35,8 +35,8 @@ export class AuctionEngine {
     if (resolvers.length === 0) throw new Error('No active resolvers available.');
 
     // Simulate bidding process
-    const bids: AuctionBid[] = resolvers.map(address => ({
-      resolverAddress: address,
+    const bids: AuctionBid[] = resolvers.map(resolver => ({
+      resolverAddress: resolver.address,
       price: Math.random() * 1000,
       timestamp: Date.now()
     }));

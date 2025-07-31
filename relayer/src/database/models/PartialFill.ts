@@ -1,4 +1,5 @@
-import { PrismaClient, PartialFill as PartialFillModel } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { PartialFill as PartialFillModel } from '@prisma/client';
 
 export interface IPartialFill {
   id?: number;

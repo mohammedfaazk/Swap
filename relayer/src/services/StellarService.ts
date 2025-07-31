@@ -1,9 +1,9 @@
-import { Server, Keypair, Networks, TransactionBuilder, BASE_FEE, Asset } from '@stellar/stellar-sdk';
+import Server, { Keypair, TransactionBuilder, BASE_FEE, Asset, Networks } from '@stellar/stellar-sdk';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
 export class StellarService {
-  server: Server;
+  server: InstanceType<typeof Server>;
   networkPassphrase: string;
 
   constructor() {
@@ -15,7 +15,7 @@ export class StellarService {
     return await this.server.loadAccount(publicKey);
   }
 
-  async submitTransaction(tx) {
+  async submitTransaction(tx: any) {
     return await this.server.submitTransaction(tx);
   }
 

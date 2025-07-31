@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 
 /** Demo analytics. Replace with live API for real stats. */

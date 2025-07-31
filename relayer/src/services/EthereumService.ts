@@ -1,23 +1,23 @@
-import { ethers } from 'ethers';
+import { JsonRpcProvider, parseEther, Contract, Wallet } from 'ethers';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 
 export class EthereumService {
-  provider: ethers.providers.JsonRpcProvider;
-  signer?: ethers.Signer;
-  contract?: ethers.Contract;
+  provider: JsonRpcProvider;
+  signer?: Wallet;
+  contract?: Contract;
 
   constructor() {
-    this.provider = new ethers.providers.JsonRpcProvider(config.ethereum.rpcUrl);
+    this.provider = new JsonRpcProvider(config.ethereum.rpcUrl);
   }
 
   async connectWallet(privateKey: string) {
-    this.signer = new ethers.Wallet(privateKey, this.provider);
+    this.signer = new Wallet(privateKey, this.provider);
   }
 
   async attachContract(address: string, abi: any) {
     if (!this.signer) throw new Error('Wallet not connected');
-    this.contract = new ethers.Contract(address, abi, this.signer);
+    this.contract = new Contract(address, abi, this.signer);
   }
 
   async initiateSwap(params: {
@@ -39,7 +39,7 @@ export class EthereumService {
       params.resolver,
       params.enablePartialFill,
       params.minimumFill,
-      { value: ethers.utils.parseEther(params.amount) }
+      { value: parseEther(params.amount) }
     );
 
     const receipt = await tx.wait();

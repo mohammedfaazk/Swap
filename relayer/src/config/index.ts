@@ -93,7 +93,7 @@ const rawConfig = {
     healthCheckInterval: parseInt(process.env.HEALTH_CHECK_INTERVAL || '30000'),
   },
   security: {
-    jwtSecret: process.env.JWT_SECRET || 'your-super-secret-jwt-key-here-change-in-production',
+    jwtSecret: process.env.JWT_SECRET || 'stellarbridge-demo-jwt-secret-min-32-chars-long-12345',
     apiRateLimit: parseInt(process.env.API_RATE_LIMIT || '100'),
     enableCors: process.env.ENABLE_CORS !== 'false',
   },

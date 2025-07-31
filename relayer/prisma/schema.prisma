@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/@prisma/client"
 }
 
 datasource db {
@@ -17,10 +16,11 @@ model Swap {
   timelock         Int
   stellarAccount   String
   state            String
+  toChain          String
   enablePartialFill Boolean @default(false)
-  minimumFill      String?  @default(null)
-  filledAmount     String?  @default(null)
-  merkleRoot       String?  @default(null)
+  minimumFill      String?
+  filledAmount     String?
+  merkleRoot       String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }

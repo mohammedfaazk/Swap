@@ -1,4 +1,5 @@
-import { PrismaClient, Swap as SwapModel } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { Swap as SwapModel } from '@prisma/client';
 
 export interface ISwap {
   id: string;
@@ -9,6 +10,7 @@ export interface ISwap {
   timelock: number;
   stellarAccount: string;
   state: string;
+  toChain: string;
   enablePartialFill: boolean;
   createdAt: Date;
   updatedAt: Date;

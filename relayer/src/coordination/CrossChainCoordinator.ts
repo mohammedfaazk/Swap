@@ -55,11 +55,22 @@ export class CrossChainCoordinator {
   async getVolume24h() {
     // Sum swap amounts in last 24 hours
     const fromDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const volume = await this.options.prisma.swap.aggregate({
-      where: { createdAt: { gte: fromDate } },
-      _sum: { amount: true }
+    const swaps = await this.options.prisma.swap.findMany({
+      where: {
+        createdAt: {
+          gte: fromDate
+        },
+        state: 'COMPLETED'
+      },
+      select: { amount: true }
     });
-    return volume._sum.amount || '0';
+    
+    // Sum amounts manually since they're stored as strings
+    const totalVolume = swaps.reduce((sum, swap) => {
+      return sum + parseFloat(swap.amount || '0');
+    }, 0);
+    
+    return totalVolume.toString();
   }
 
   async getSuccessRate() {

@@ -1,4 +1,5 @@
-import { PrismaClient, Resolver as ResolverModel } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { Resolver as ResolverModel } from '@prisma/client';
 
 export interface IResolver {
   id?: number;

@@ -1,5 +1,5 @@
-import { Server, AccountResponse } from '@stellar/stellar-sdk';
 import { PrismaClient } from '@prisma/client';
+import Server, { Keypair } from '@stellar/stellar-sdk';
 import Redis from 'ioredis';
 import { BaseMonitor } from './BaseMonitor';
 import { logger } from '../utils/logger';
@@ -13,7 +13,7 @@ interface StellarMonitorConfig {
 }
 
 export class StellarMonitor extends BaseMonitor {
-  private server: Server;
+  private server: InstanceType<typeof Server>;
   private subscription: any;
 
   constructor(private config: StellarMonitorConfig) {
@@ -32,8 +32,8 @@ export class StellarMonitor extends BaseMonitor {
       .forContract(this.config.contractId)
       .cursor('now')
       .stream({
-        onmessage: (payment) => this.handlePayment(payment),
-        onerror: (error) => logger.error('Stellar stream error:', error),
+        onmessage: (payment: any) => this.handlePayment(payment),
+        onerror: (error: any) => logger.error('Stellar stream error:', error),
       });
   }
 
@@ -54,10 +54,12 @@ export class StellarMonitor extends BaseMonitor {
       logger.info(`Stellar payment received: swapId=${swapId}, amount=${amount}`);
 
       // Database update example
-      await this.config.prisma.swap.updateMany({
-        where: { id: swapId, state: 'INITIATED' },
-        data: { state: 'LOCKED', updatedAt: new Date() }
-      });
+      if (swapId) {
+        await this.config.prisma.swap.updateMany({
+          where: { id: swapId, state: 'INITIATED' },
+          data: { state: 'LOCKED', updatedAt: new Date() }
+        });
+      }
 
       // Emit event for relayer coordination
       this.emitEvent('StellarPayment', {
@@ -70,5 +72,15 @@ export class StellarMonitor extends BaseMonitor {
     } catch (error) {
       logger.error('Error handling Stellar payment:', error);
     }
+  }
+
+  async getStatus() {
+    return {
+      network: 'stellar',
+      connected: this.running,
+      contractId: this.config.contractId,
+      horizonUrl: this.config.horizonUrl,
+      networkPassphrase: this.config.networkPassphrase
+    };
   }
 }

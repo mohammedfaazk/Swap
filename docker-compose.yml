@@ -29,7 +29,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://stellarbridge:hackathon2024_secure@postgres:5432/stellarbridge
+      - DATABASE_URL=postgresql://stellarbridge:${POSTGRES_PASSWORD:-hackathon2024_secure}@postgres:5432/stellarbridge
       - REDIS_URL=redis://redis:6379
       - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL}
       - STELLAR_RPC_URL=${STELLAR_RPC_URL}

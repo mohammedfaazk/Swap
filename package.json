@@ -4,7 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "contracts:compile": "pnpm --filter @stellarbridge/ethereum-contracts compile",
+    "contracts:test": "pnpm --filter @stellarbridge/ethereum-contracts test",
+    "relayer:dev": "pnpm --filter @stellarbridge/relayer dev",
+    "frontend:dev": "pnpm --filter frontend dev",
+    "setup": "pnpm install && pnpm build",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
   },
   "keywords": [],
   "author": "",

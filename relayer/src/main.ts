@@ -1,8 +1,8 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import websocket from '@fastify/websocket';
-import fastifyJwt from 'fastify-jwt';
-import fastifyRateLimit from 'fastify-rate-limit';
+import fastifyJwt from '@fastify/jwt';
+import fastifyRateLimit from '@fastify/rate-limit';
 import { EthereumMonitor } from './monitors/EthereumMonitor';
 import { StellarMonitor } from './monitors/StellarMonitor';
 import { ResolverManager } from './resolvers/ResolverManager';

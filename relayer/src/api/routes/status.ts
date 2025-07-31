@@ -1,7 +1,7 @@
 
 import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import { rateLimitConfig } from '../middleware/rateLimit';
-import '../../types';
+// Types are imported directly where needed
 
 interface StatusResponse {
   service: string;

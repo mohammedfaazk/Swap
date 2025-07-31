@@ -1,11 +1,9 @@
 import { FastifyPluginAsync } from 'fastify';
 
 const swapsRoutes: FastifyPluginAsync = async (app) => {
-  app.post('/initiate', async (request, reply) => {
+  app.post<{ Body: any }>('/initiate', async (request, reply) => {
     const { coordinator } = app;
-    // Validate input & create swap
-    // Assuming validation is in coordinator.validateOrder()
-    const order = request.body;
+    const order = request.body as any;
 
     const validation = await coordinator.validateOrder(order);
     if (!validation.isValid) {
@@ -14,7 +12,7 @@ const swapsRoutes: FastifyPluginAsync = async (app) => {
 
     try {
       // Start auction and swap coordination
-      const auction = await coordinator.resolverManager.auctionEngine.startAuction(order);
+      const auction = await coordinator.auctionEngine.startAuction(order);
       return reply.send({ success: true, orderId: order.id, auction });
     } catch (err) {
       request.log.error('Failed to initiate swap:', err);
@@ -24,7 +22,7 @@ const swapsRoutes: FastifyPluginAsync = async (app) => {
 
   // Additional swap routes: status, partial fills, cancel, complete etc. can be added here
 
-  app.get('/:swapId/status', async (request, reply) => {
+  app.get<{ Params: { swapId: string } }>('/:swapId/status', async (request, reply) => {
     const swapId = request.params.swapId;
     const swap = await app.prisma.swap.findUnique({ where: { id: swapId } });
     if (!swap) return reply.code(404).send({ error: 'Swap not found' });

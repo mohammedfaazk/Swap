@@ -72,8 +72,21 @@ export class ResolverManager {
     logger.info(`Resolver deregistered: ${address}`);
   }
 
-  async getAuthorizedResolvers(): Promise<string[]> {
-    return Array.from(this.resolversSet);
+  async getAuthorizedResolvers(): Promise<Array<{ address: string; stake: bigint; endpoint: string }>> {
+    const resolvers = await this.prisma.resolver.findMany({
+      where: { isAuthorized: true },
+      select: {
+        address: true,
+        stake: true,
+        endpoint: true
+      }
+    });
+    
+    return resolvers.map(resolver => ({
+      address: resolver.address,
+      stake: BigInt(resolver.stake),
+      endpoint: resolver.endpoint
+    }));
   }
 
   async getStatus() {

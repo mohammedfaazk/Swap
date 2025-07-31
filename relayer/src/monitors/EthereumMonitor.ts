@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
 import { PrismaClient } from '@prisma/client';
+import { JsonRpcProvider, parseEther, Contract } from 'ethers';
 import Redis from 'ioredis';
 import { BaseMonitor } from './BaseMonitor';
 import { logger } from '../utils/logger';
@@ -13,15 +13,15 @@ interface EthereumMonitorConfig {
 }
 
 export class EthereumMonitor extends BaseMonitor {
-  private provider: ethers.providers.JsonRpcProvider;
-  private contract: ethers.Contract;
+  private provider: JsonRpcProvider;
+  private contract: Contract;
   private lastProcessedBlock: number;
   private pollingInterval?: NodeJS.Timeout;
 
   constructor(private config: EthereumMonitorConfig) {
     super();
-    this.provider = new ethers.providers.JsonRpcProvider(config.rpcUrl);
-    this.contract = new ethers.Contract(
+    this.provider = new JsonRpcProvider(config.rpcUrl);
+    this.contract = new Contract(
       config.contractAddress,
       [
         "event SwapInitiated(bytes32 indexed swapId, address indexed initiator, address indexed resolver, uint256 amount, bytes32 hashlock, uint256 timelock, string stellarAccount, bool enablePartialFill)",
@@ -73,7 +73,7 @@ export class EthereumMonitor extends BaseMonitor {
     }
   }
 
-  private async processSwapInitiated(event: ethers.Event) {
+  private async processSwapInitiated(event: any) {
     try {
       const {
         swapId,
@@ -97,10 +97,9 @@ export class EthereumMonitor extends BaseMonitor {
           resolver,
           amount: amount.toString(),
           hashlock,
-          timelock: timelock.toNumber(),
+          timelock: Number(timelock),
           stellarAccount,
           state: 'INITIATED',
-          fromChain: 'ethereum',
           toChain: 'stellar',
           enablePartialFill,
           createdAt: new Date(),
@@ -115,12 +114,22 @@ export class EthereumMonitor extends BaseMonitor {
         resolver,
         amount: amount.toString(),
         hashlock,
-        timelock: timelock.toNumber(),
+        timelock: Number(timelock),
         stellarAccount,
         enablePartialFill,
       });
     } catch (err) {
       logger.error('Error processing SwapInitiated event:', err);
     }
+  }
+
+  async getStatus() {
+    return {
+      network: 'ethereum',
+      connected: this.running,
+      contractAddress: this.config.contractAddress,
+      lastBlock: await this.provider.getBlockNumber(),
+      rpcUrl: this.config.rpcUrl
+    };
   }
 }
