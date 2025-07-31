@@ -20,7 +20,6 @@ pub fn can_complete_swap(env: &Env, swap: &Swap) -> Result<(), ContractError> {
                 Ok(())
             }
         }
-        
         SwapState::Completed => Err(ContractError::SwapAlreadyCompleted),
         SwapState::Refunded => Err(ContractError::SwapAlreadyRefunded),
         SwapState::Expired => Err(ContractError::SwapExpired),

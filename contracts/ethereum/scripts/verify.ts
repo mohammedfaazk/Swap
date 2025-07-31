@@ -21,7 +21,19 @@ async function main() {
   let deploymentInfo: DeploymentInfo;
 
   try {
+    if (!require("fs").existsSync(deploymentPath)) {
+      throw new Error(`Deployment file not found at ${deploymentPath}`);
+    }
     deploymentInfo = JSON.parse(readFileSync(deploymentPath, "utf8"));
+    if (!deploymentInfo.stellarBridge || !deploymentInfo.partialFillManager || !deploymentInfo.resolverRegistry) {
+      throw new Error("Deployment file is missing contract addresses.");
+    }
+    if (!deploymentInfo.constructorArgs ||
+        !deploymentInfo.constructorArgs.stellarBridge ||
+        !deploymentInfo.constructorArgs.partialFillManager ||
+        !deploymentInfo.constructorArgs.resolverRegistry) {
+      throw new Error("Deployment file is missing constructor arguments.");
+    }
   } catch (error) {
     console.error("❌ Could not read deployment file:", error);
     process.exit(1);
@@ -32,6 +44,7 @@ async function main() {
 
   // Verify StellarBridgeFusionPlus
   try {
+    if (!deploymentInfo.stellarBridge) throw new Error("stellarBridge address missing");
     console.log("🔍 Verifying StellarBridgeFusionPlus...");
     await run("verify:verify", {
       address: deploymentInfo.stellarBridge,
@@ -39,12 +52,13 @@ async function main() {
       contract: "contracts/StellarBridgeFusionPlus.sol:StellarBridgeFusionPlus"
     });
     console.log("✅ StellarBridgeFusionPlus verified successfully");
-  } catch (error) {
-    console.error("❌ StellarBridgeFusionPlus verification failed:", error);
+  } catch (error: any) {
+    console.error("❌ StellarBridgeFusionPlus verification failed:", error?.message || error);
   }
 
   // Verify PartialFillManager
   try {
+    if (!deploymentInfo.partialFillManager) throw new Error("partialFillManager address missing");
     console.log("🔍 Verifying PartialFillManager...");
     await run("verify:verify", {
       address: deploymentInfo.partialFillManager,
@@ -52,12 +66,13 @@ async function main() {
       contract: "contracts/PartialFillManager.sol:PartialFillManager"
     });
     console.log("✅ PartialFillManager verified successfully");
-  } catch (error) {
-    console.error("❌ PartialFillManager verification failed:", error);
+  } catch (error: any) {
+    console.error("❌ PartialFillManager verification failed:", error?.message || error);
   }
 
   // Verify ResolverRegistry
   try {
+    if (!deploymentInfo.resolverRegistry) throw new Error("resolverRegistry address missing");
     console.log("🔍 Verifying ResolverRegistry...");
     await run("verify:verify", {
       address: deploymentInfo.resolverRegistry,
@@ -65,23 +80,21 @@ async function main() {
       contract: "contracts/ResolverRegistry.sol:ResolverRegistry"
     });
     console.log("✅ ResolverRegistry verified successfully");
-  } catch (error) {
-    console.error("❌ ResolverRegistry verification failed:", error);
+  } catch (error: any) {
+    console.error("❌ ResolverRegistry verification failed:", error?.message || error);
   }
 
   // Verify libraries if deployed separately
   console.log("🔍 Verifying libraries...");
-  
-  // MerkleProof library verification
+  // MerkleProof library verification (skipped if not deployed separately)
   try {
-    const merkleProofFactory = await ethers.getContractFactory("MerkleProof");
-    const merkleProofBytecode = merkleProofFactory.bytecode;
-    
-    // Find library address from deployment
-    // Note: This would need to be extracted from the deployment process
-    console.log("📚 MerkleProof library is embedded in contracts");
-  } catch (error) {
-    console.log("ℹ️ MerkleProof library verification skipped (embedded)");
+    // If MerkleProof is deployed as a library, add verification here
+    // Otherwise, skip
+    // const merkleProofFactory = await ethers.getContractFactory("MerkleProof");
+    // const merkleProofBytecode = merkleProofFactory.bytecode;
+    console.log("📚 MerkleProof library is embedded in contracts or not deployed separately");
+  } catch (error: any) {
+    console.log("ℹ️ MerkleProof library verification skipped (embedded or not found)");
   }
 
   console.log("🎉 Contract verification process completed!");

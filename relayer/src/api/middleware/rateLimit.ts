@@ -1,6 +1,5 @@
-import fastifyRateLimit from 'fastify-rate-limit';
-
-export const rateLimit = fastifyRateLimit({
+export const rateLimitConfig = {
   max: 150,
   timeWindow: '1 minute'
-});
+};
+
