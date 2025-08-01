@@ -30,6 +30,8 @@ export type { PartialFillManager } from "./contracts/PartialFillManager";
 export { PartialFillManager__factory } from "./factories/contracts/PartialFillManager__factory";
 export type { ResolverRegistry } from "./contracts/ResolverRegistry";
 export { ResolverRegistry__factory } from "./factories/contracts/ResolverRegistry__factory";
+export type { SimpleHTLC } from "./contracts/SimpleHTLC";
+export { SimpleHTLC__factory } from "./factories/contracts/SimpleHTLC__factory";
 export type { StellarBridgeFusionPlus } from "./contracts/StellarBridgeFusionPlus";
 export { StellarBridgeFusionPlus__factory } from "./factories/contracts/StellarBridgeFusionPlus__factory";
 export type { MockERC20 } from "./contracts/test/MockERC20";

@@ -9,4 +9,5 @@ import type * as test from "./test";
 export type { test };
 export type { PartialFillManager } from "./PartialFillManager";
 export type { ResolverRegistry } from "./ResolverRegistry";
+export type { SimpleHTLC } from "./SimpleHTLC";
 export type { StellarBridgeFusionPlus } from "./StellarBridgeFusionPlus";

@@ -62,6 +62,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ResolverRegistry__factory>;
     getContractFactory(
+      name: "SimpleHTLC",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimpleHTLC__factory>;
+    getContractFactory(
       name: "StellarBridgeFusionPlus",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StellarBridgeFusionPlus__factory>;
@@ -131,6 +135,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ResolverRegistry>;
     getContractAt(
+      name: "SimpleHTLC",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimpleHTLC>;
+    getContractAt(
       name: "StellarBridgeFusionPlus",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -190,6 +199,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ResolverRegistry>;
     deployContract(
+      name: "SimpleHTLC",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpleHTLC>;
+    deployContract(
       name: "StellarBridgeFusionPlus",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.StellarBridgeFusionPlus>;
@@ -258,6 +271,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ResolverRegistry>;
+    deployContract(
+      name: "SimpleHTLC",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpleHTLC>;
     deployContract(
       name: "StellarBridgeFusionPlus",
       args: any[],

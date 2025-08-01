@@ -6,4 +6,5 @@ export * as libraries from "./libraries";
 export * as test from "./test";
 export { PartialFillManager__factory } from "./PartialFillManager__factory";
 export { ResolverRegistry__factory } from "./ResolverRegistry__factory";
+export { SimpleHTLC__factory } from "./SimpleHTLC__factory";
 export { StellarBridgeFusionPlus__factory } from "./StellarBridgeFusionPlus__factory";

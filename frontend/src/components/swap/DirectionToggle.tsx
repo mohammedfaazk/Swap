@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "../ui/button";
 export function DirectionToggle({ direction, onToggle }: { direction: "ETH_TO_XLM"|"XLM_TO_ETH", onToggle: (d:"ETH_TO_XLM"|"XLM_TO_ETH")=>void }) {
   return (

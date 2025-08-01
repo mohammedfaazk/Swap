@@ -19,7 +19,7 @@ import { PrismaClient } from '@prisma/client';
 import Redis from 'ioredis';
 
 class StellarBridgeRelayer {
-  app = Fastify({ logger });
+  app = Fastify({ logger: true });
   prisma = new PrismaClient();
   redis = new Redis(config.redis.url);
 
@@ -109,10 +109,13 @@ class StellarBridgeRelayer {
       await this.redis.ping();
       logger.info('Connected to Redis.');
 
-      await this.ethereumMonitor.start();
-      await this.stellarMonitor.start();
-      await this.resolverManager.start();
-      await this.coordinator.start();
+      await this.initServices();
+
+      // Temporarily disable monitors for debugging
+      // await this.ethereumMonitor.start();
+      // await this.stellarMonitor.start();
+      // await this.resolverManager.start();
+      // await this.coordinator.start();
 
       const PORT = config.server.port;
       const HOST = config.server.host;
@@ -121,6 +124,7 @@ class StellarBridgeRelayer {
       logger.info(`Relayer running at http://${HOST}:${PORT}`);
     } catch (err) {
       logger.error('Error during startup:', err);
+      logger.error('Stack trace:', err instanceof Error ? err.stack : 'Unknown error');
       process.exit(1);
     }
   }
@@ -152,6 +156,9 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-relayer.start();
+relayer.start().catch(err => {
+  console.error('Failed to start relayer:', err);
+  process.exit(1);
+});
 
 export { StellarBridgeRelayer };

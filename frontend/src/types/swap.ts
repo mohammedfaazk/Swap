@@ -10,4 +10,7 @@ export interface SwapOrder {
   status?: string;
   fromAmount?: string;
   toAccount?: string;
+  timestamp?: number;
+  txHash?: string;
+  swapId?: string;
 }
