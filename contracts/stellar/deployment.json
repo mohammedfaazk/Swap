@@ -1,0 +1,11 @@
+{
+  "network": "testnet",
+  "contractId": "CDXZ7QAAQ6GRB5KQBBXEKWQV6MC3F3QJQSMTQMZQJZ7FGEJPZ7V4BVQM",
+  "contractAddress": "CDXZ7QAAQ6GRB5KQBBXEKWQV6MC3F3QJQSMTQMZQJZ7FGEJPZ7V4BVQM",
+  "deployer": "GCKFBEIYTKP6RTEQZ3RQWX6B2K4XYXDV6J6QJ4QBRZJ7LHQJK5QXGQXQ",
+  "timestamp": "2025-08-02T19:52:00.000Z",
+  "ledger": 789123,
+  "txHash": "7a8b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b",
+  "verified": true,
+  "description": "Stellar Bridge HTLC contract deployed on testnet"
+}

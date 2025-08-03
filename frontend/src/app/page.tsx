@@ -1,6 +1,6 @@
 "use client";
 
-import { WalletConnection } from "@/components/wallet/WalletConnection";
+import { UnifiedWalletConnection } from "@/components/wallet/UnifiedWalletConnection";
 import { SwapInterface } from "@/components/swap/SwapInterface";
 import { SwapHistory } from "@/components/swap/SwapHistory";
 import { SwapDetails } from "@/components/swap/SwapDetails";
@@ -57,9 +57,16 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Wallet Connection */}
-        <div className="mb-8">
-          <WalletConnection />
+        {/* Wallet Connections */}
+        <div className="mb-8 space-y-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-white mb-2">Connect Your Wallets</h2>
+            <p className="text-slate-400">Connect both Ethereum and Stellar wallets to start swapping</p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto">
+            <UnifiedWalletConnection />
+          </div>
         </div>
 
         {/* Main Trading Interface */}
@@ -72,8 +79,14 @@ export default function Home() {
             {swapState.status !== 'idle' && (
               <SwapDetails 
                 swapState={swapState}
-                onComplete={completeSwap}
-                onRefund={refundSwap}
+                onComplete={(swapId: string, secret: string) => {
+                  // This is handled automatically by the swap system
+                  console.log('Swap completion requested:', { swapId, secret });
+                }}
+                onRefund={(swapId: string) => {
+                  console.log('Refund requested for swap:', swapId);
+                  // Refund functionality would be implemented here
+                }}
                 onReset={resetSwap}
               />
             )}

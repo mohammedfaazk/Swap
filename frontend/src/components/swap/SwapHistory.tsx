@@ -2,7 +2,7 @@
 
 import { useSwap } from "@/hooks/useSwap";
 export function SwapHistory() {
-  const { history } = useSwap();
+  const { history = [] } = useSwap();
   
   return (
     <div className="p-8 bg-slate-800/80 backdrop-blur-sm rounded-lg shadow-xl border border-slate-700">

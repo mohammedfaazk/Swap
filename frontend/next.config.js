@@ -9,6 +9,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    esmExternals: 'loose'
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
@@ -25,8 +28,25 @@ const nextConfig = {
         assert: false,
         os: false,
         path: false,
+        buffer: require.resolve('buffer'),
+        events: require.resolve('events'),
+        util: require.resolve('util'),
       };
+      
+      // Ignore node-specific modules in Stellar SDK
+      config.externals = config.externals || [];
+      config.externals.push({
+        'sodium-native': 'sodium-native',
+        'node-forge': 'node-forge',
+      });
     }
+    
+    // Add this to handle module resolution issues
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').resolve(__dirname, 'src'),
+    };
+    
     return config;
   },
 }

@@ -1,37 +1,21 @@
-import { 
-  Horizon,
-  Networks, 
+import * as StellarSdk from "@stellar/stellar-sdk";
+
+const { 
   TransactionBuilder, 
   Operation, 
   Asset, 
-  StrKey, 
-  Keypair, 
-  Memo
-} from "@stellar/stellar-sdk";
+  Memo 
+} = StellarSdk;
 
 export const STELLAR_TESTNET_URL = "https://horizon-testnet.stellar.org";
-export const STELLAR_NETWORK = Networks.TESTNET;
+export const STELLAR_NETWORK = StellarSdk.Networks.TESTNET;
 
 export function isValidStellarAddress(address: string) {
-  return StrKey.isValidEd25519PublicKey(address);
+  return StellarSdk.StrKey.isValidEd25519PublicKey(address);
 }
 
 export function getStellarServer() {
-  return new Horizon.Server(STELLAR_TESTNET_URL);
-}
-
-// For demo purposes - in production, use proper wallet integration like Freighter
-let stellarKeypair: any | null = null;
-
-export function connectStellarWallet() {
-  // In a real app, you'd integrate with Freighter wallet or similar
-  // For demo, we'll generate/use a test keypair
-  if (!stellarKeypair) {
-    // You can replace this with actual keypair for testing
-    stellarKeypair = Keypair.random();
-    console.log("Generated Stellar test wallet:", stellarKeypair.publicKey());
-  }
-  return stellarKeypair;
+  return new StellarSdk.Horizon.Server(STELLAR_TESTNET_URL);
 }
 
 export async function initiateStellarSwap(

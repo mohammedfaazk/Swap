@@ -86,7 +86,7 @@ export function RealTransactionWarning({
           <div className="space-y-2 text-xs text-blue-200">
             <p>✅ This is Sepolia testnet - no real money at risk</p>
             <p>✅ Contract is audited and uses OpenZeppelin security patterns</p>
-            <p>✅ You can always refund if the swap isn't completed</p>
+            <p>✅ You can always refund if the swap isn&apos;t completed</p>
             <p>✅ Your private keys never leave your wallet</p>
           </div>
         </div>

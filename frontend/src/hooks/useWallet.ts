@@ -137,7 +137,7 @@ export function useWallet() {
               blockExplorerUrls: ["https://sepolia.etherscan.io/"],
             }],
           });
-        } catch (addError) {
+        } catch (_addError) {
           throw new Error("Failed to add Sepolia network");
         }
       } else {
@@ -146,7 +146,20 @@ export function useWallet() {
     }
   };
 
-  const disconnectWallet = () => {
+  const disconnectWallet = async () => {
+    // Show account selection dialog first
+    if (window.ethereum && window.ethereum.request) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_requestPermissions",
+          params: [{ eth_accounts: {} }]
+        });
+      } catch (_error) {
+        console.log("User cancelled account selection");
+      }
+    }
+    
+    // Reset local state
     setState({
       isConnected: false,
       address: null,
@@ -155,6 +168,23 @@ export function useWallet() {
       error: null,
       isLoading: false,
     });
+  };
+
+  const switchAccount = async () => {
+    if (!window.ethereum) return;
+    
+    try {
+      updateLoading(true);
+      await window.ethereum.request({
+        method: "wallet_requestPermissions",
+        params: [{ eth_accounts: {} }]
+      });
+      await checkConnection();
+    } catch (error: any) {
+      console.error("Account switch error:", error);
+      updateError("Failed to switch account");
+      updateLoading(false);
+    }
   };
 
   const refreshBalance = useCallback(async () => {
@@ -201,6 +231,7 @@ export function useWallet() {
     ...state,
     connectWallet,
     disconnectWallet,
+    switchAccount,
     refreshBalance,
     isWrongNetwork: state.chainId !== null && state.chainId !== SEPOLIA_CHAIN_ID,
     switchToSepolia,

@@ -1,6 +1,7 @@
 "use client";
 
-import { useWallet } from "@/hooks/useWallet";
+import { useMultiWallet } from "./WalletProvider";
+import { WalletSelector } from "./WalletSelector";
 import { Button } from "../ui/button";
 import { AlertCircle, CheckCircle, ExternalLink, RefreshCw, Wallet } from "lucide-react";
 
@@ -9,15 +10,15 @@ export function WalletConnection() {
     isConnected, 
     address, 
     balance, 
-    chainId, 
     error, 
     isLoading,
     isWrongNetwork,
-    connectWallet, 
+    walletType,
     disconnectWallet,
+    switchAccount,
     refreshBalance,
     switchToSepolia
-  } = useWallet();
+  } = useMultiWallet();
 
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -39,27 +40,6 @@ export function WalletConnection() {
     );
   }
 
-  if (error && error.includes("MetaMask not installed")) {
-    return (
-      <div className="p-6 bg-gradient-to-r from-red-900/50 to-red-800/50 rounded-xl border border-red-500/50 shadow-lg">
-        <div className="flex items-center space-x-3 mb-4">
-          <AlertCircle className="w-6 h-6 text-red-400" />
-          <h3 className="text-lg font-semibold text-white">MetaMask Required</h3>
-        </div>
-        <p className="text-red-100 mb-4">
-          You need MetaMask to use this application. MetaMask is a secure wallet for Ethereum.
-        </p>
-        <Button 
-          onClick={() => window.open("https://metamask.io/download/", "_blank")}
-          className="bg-orange-600 hover:bg-orange-700 text-white"
-        >
-          <ExternalLink className="w-4 h-4 mr-2" />
-          Install MetaMask
-        </Button>
-      </div>
-    );
-  }
-
   if (!isConnected) {
     return (
       <div className="p-6 bg-gradient-to-r from-slate-800 to-slate-700 rounded-xl border border-slate-600 shadow-lg">
@@ -68,21 +48,10 @@ export function WalletConnection() {
             <Wallet className="w-6 h-6 text-slate-400" />
             <div>
               <h3 className="text-lg font-semibold text-white">Connect Wallet</h3>
-              <p className="text-sm text-slate-300">Connect your MetaMask to start trading</p>
+              <p className="text-sm text-slate-300">Choose your preferred wallet to start trading</p>
             </div>
           </div>
-          <Button 
-            onClick={connectWallet}
-            disabled={isLoading}
-            className="bg-brand hover:bg-brand/90"
-          >
-            {isLoading ? (
-              <RefreshCw className="w-4 h-4 animate-spin mr-2" />
-            ) : (
-              <Wallet className="w-4 h-4 mr-2" />
-            )}
-            Connect MetaMask
-          </Button>
+          <WalletSelector />
         </div>
         {error && (
           <div className="mt-4 p-3 bg-red-900/50 border border-red-500/50 rounded-lg">
@@ -139,7 +108,11 @@ export function WalletConnection() {
         <div className="flex items-center space-x-3">
           <CheckCircle className="w-6 h-6 text-green-400" />
           <div>
-            <h3 className="text-lg font-semibold text-white">Wallet Connected</h3>
+            <h3 className="text-lg font-semibold text-white">
+              {walletType === 'metamask' ? '🦊 MetaMask' : 
+               walletType === 'coinbase' ? '🔵 Coinbase' : 
+               walletType === 'walletconnect' ? '🔗 WalletConnect' : 'Wallet'} Connected
+            </h3>
             <div className="flex items-center space-x-4 mt-1">
               <p className="text-sm text-green-100">
                 {formatAddress(address!)}
@@ -157,7 +130,7 @@ export function WalletConnection() {
                 </button>
               </div>
             </div>
-            <p className="text-xs text-slate-400 mt-1">Sepolia Testnet</p>
+            <p className="text-xs text-slate-400 mt-1">Sepolia Testnet • {walletType?.charAt(0).toUpperCase()}{walletType?.slice(1)} Wallet</p>
           </div>
         </div>
         <div className="space-y-2">
@@ -171,12 +144,21 @@ export function WalletConnection() {
             View on Explorer
           </Button>
           <Button 
-            onClick={disconnectWallet}
+            onClick={switchAccount}
             variant="outline" 
             size="sm"
             className="text-slate-300 border-slate-600 hover:bg-slate-700 w-full"
           >
-            Disconnect
+            <Wallet className="w-3 h-3 mr-1" />
+            Switch Account
+          </Button>
+          <Button 
+            onClick={disconnectWallet}
+            variant="outline" 
+            size="sm"
+            className="text-red-300 border-red-600 hover:bg-red-900/50 w-full"
+          >
+            Disconnect & Choose Wallet
           </Button>
         </div>
       </div>

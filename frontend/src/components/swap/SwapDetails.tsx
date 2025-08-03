@@ -26,33 +26,39 @@ export function SwapDetails({ swapState, onComplete, onRefund, onReset }: SwapDe
 
   const getStatusColor = (status: SwapState['status']) => {
     switch (status) {
-      case 'creating': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'waiting_counterparty': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'initializing': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirming': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'completed': return 'bg-green-100 text-green-800 border-green-200';
       case 'failed': return 'bg-red-100 text-red-800 border-red-200';
       case 'refunded': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'idle': return 'bg-gray-100 text-gray-800 border-gray-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: SwapState['status']) => {
     switch (status) {
-      case 'creating': return <Clock className="w-4 h-4" />;
-      case 'waiting_counterparty': return <Clock className="w-4 h-4" />;
+      case 'initializing': return <Clock className="w-4 h-4" />;
+      case 'pending': return <Clock className="w-4 h-4" />;
+      case 'confirming': return <Clock className="w-4 h-4" />;
       case 'completed': return <CheckCircle className="w-4 h-4" />;
       case 'failed': return <XCircle className="w-4 h-4" />;
       case 'refunded': return <AlertTriangle className="w-4 h-4" />;
+      case 'idle': return <Clock className="w-4 h-4" />;
       default: return <Clock className="w-4 h-4" />;
     }
   };
 
   const formatStatus = (status: SwapState['status']) => {
     switch (status) {
-      case 'creating': return 'Creating Swap';
-      case 'waiting_counterparty': return 'Waiting for Counterparty';
+      case 'initializing': return 'Initializing Swap';
+      case 'pending': return 'Pending Confirmation';
+      case 'confirming': return 'Confirming Transaction';
       case 'completed': return 'Completed';
       case 'failed': return 'Failed';
       case 'refunded': return 'Refunded';
+      case 'idle': return 'Ready';
       default: return 'Unknown';
     }
   };
@@ -93,19 +99,19 @@ export function SwapDetails({ swapState, onComplete, onRefund, onReset }: SwapDe
 
       <CardContent className="space-y-6">
         {/* Swap ID */}
-        {swapState.swapId && (
+        {swapState.id && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300">Swap ID</label>
             <div className="flex items-center space-x-2">
               <Input
-                value={swapState.swapId}
+                value={swapState.id}
                 readOnly
                 className="font-mono text-sm bg-slate-700/50 border-slate-600"
               />
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => copyToClipboard(swapState.swapId!, "Swap ID")}
+                onClick={() => copyToClipboard(swapState.id!, "Swap ID")}
                 className="border-slate-600 text-slate-300 hover:bg-slate-700"
               >
                 <Copy className="w-4 h-4" />
@@ -170,19 +176,19 @@ export function SwapDetails({ swapState, onComplete, onRefund, onReset }: SwapDe
         )}
 
         {/* Transaction Hash */}
-        {swapState.txHash && (
+        {swapState.transactionHash && (
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300">Transaction Hash</label>
             <div className="flex items-center space-x-2">
               <Input
-                value={swapState.txHash}
+                value={swapState.transactionHash}
                 readOnly
                 className="font-mono text-sm bg-slate-700/50 border-slate-600"
               />
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => copyToClipboard(swapState.txHash!, "Transaction Hash")}
+                onClick={() => copyToClipboard(swapState.transactionHash!, "Transaction Hash")}
                 className="border-slate-600 text-slate-300 hover:bg-slate-700"
               >
                 <Copy className="w-4 h-4" />
@@ -190,7 +196,7 @@ export function SwapDetails({ swapState, onComplete, onRefund, onReset }: SwapDe
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => window.open(`https://sepolia.etherscan.io/tx/${swapState.txHash}`, '_blank')}
+                onClick={() => window.open(`https://sepolia.etherscan.io/tx/${swapState.transactionHash}`, '_blank')}
                 className="border-slate-600 text-slate-300 hover:bg-slate-700"
               >
                 <ExternalLink className="w-4 h-4" />
@@ -223,20 +229,20 @@ export function SwapDetails({ swapState, onComplete, onRefund, onReset }: SwapDe
         )}
 
         {/* Error Display */}
-        {swapState.error && (
+        {swapState.errorMessage && (
           <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4">
             <div className="flex items-center space-x-2 text-red-400">
               <XCircle className="w-4 h-4" />
               <span className="font-medium">Error</span>
             </div>
-            <p className="text-red-300 text-sm mt-1">{swapState.error}</p>
+            <p className="text-red-300 text-sm mt-1">{swapState.errorMessage}</p>
           </div>
         )}
 
         {/* Action Buttons */}
         <div className="flex flex-col space-y-3 pt-4 border-t border-slate-700">
           {/* Complete Swap */}
-          {swapState.status === 'waiting_counterparty' && !isExpired() && (
+          {swapState.status === 'pending' && !isExpired() && (
             <div className="space-y-3">
               <h4 className="text-sm font-medium text-slate-300">Complete Swap</h4>
               <div className="flex space-x-2">
@@ -247,8 +253,8 @@ export function SwapDetails({ swapState, onComplete, onRefund, onReset }: SwapDe
                   className="flex-1 bg-slate-700/50 border-slate-600"
                 />
                 <Button
-                  onClick={() => onComplete?.(swapState.swapId!, secretInput)}
-                  disabled={!secretInput.trim() || !swapState.swapId}
+                  onClick={() => onComplete?.(swapState.id!, secretInput)}
+                  disabled={!secretInput.trim() || !swapState.id}
                   className="bg-green-600 hover:bg-green-700"
                 >
                   Complete
@@ -261,10 +267,10 @@ export function SwapDetails({ swapState, onComplete, onRefund, onReset }: SwapDe
           )}
 
           {/* Refund Button */}
-          {(swapState.status === 'waiting_counterparty' || swapState.status === 'failed') && 
-           isExpired() && swapState.swapId && (
+          {(swapState.status === 'pending' || swapState.status === 'failed') && 
+           isExpired() && swapState.id && (
             <Button
-              onClick={() => onRefund?.(swapState.swapId!)}
+              onClick={() => onRefund?.(swapState.id!)}
               variant="outline"
               className="w-full border-yellow-600 text-yellow-400 hover:bg-yellow-600/20"
             >
