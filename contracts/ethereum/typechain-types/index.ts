@@ -18,6 +18,8 @@ export type { IERC20Permit } from "./@openzeppelin/contracts/token/ERC20/extensi
 export { IERC20Permit__factory } from "./factories/@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit__factory";
 export type { IERC20 } from "./@openzeppelin/contracts/token/ERC20/IERC20";
 export { IERC20__factory } from "./factories/@openzeppelin/contracts/token/ERC20/IERC20__factory";
+export type { CrossChainBridge } from "./contracts/CrossChainBridge";
+export { CrossChainBridge__factory } from "./factories/contracts/CrossChainBridge__factory";
 export type { IPartialFill } from "./contracts/interfaces/IPartialFill";
 export { IPartialFill__factory } from "./factories/contracts/interfaces/IPartialFill__factory";
 export type { IResolver } from "./contracts/interfaces/IResolver";
@@ -28,6 +30,8 @@ export type { SafeTransfer } from "./contracts/libraries/SafeTransfer";
 export { SafeTransfer__factory } from "./factories/contracts/libraries/SafeTransfer__factory";
 export type { PartialFillManager } from "./contracts/PartialFillManager";
 export { PartialFillManager__factory } from "./factories/contracts/PartialFillManager__factory";
+export type { ProductionHTLC } from "./contracts/ProductionHTLC";
+export { ProductionHTLC__factory } from "./factories/contracts/ProductionHTLC__factory";
 export type { ResolverRegistry } from "./contracts/ResolverRegistry";
 export { ResolverRegistry__factory } from "./factories/contracts/ResolverRegistry__factory";
 export type { SimpleHTLC } from "./contracts/SimpleHTLC";

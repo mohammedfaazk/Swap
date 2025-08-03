@@ -284,7 +284,7 @@ export function useProductionSwap() {
       // Address validation
       if (order.direction === 'ETH_TO_XLM') {
         // Validate Stellar address
-        checks.addressValidation = order.toAccount?.startsWith('G') && order.toAccount.length === 56;
+        checks.addressValidation = !!(order.toAccount?.startsWith('G') && order.toAccount.length === 56);
       } else {
         // Validate Ethereum address
         checks.addressValidation = ethers.isAddress(order.toAccount || '');
@@ -386,26 +386,33 @@ export function useProductionSwap() {
       updateSwapState({
         status: 'initializing',
         progress: 5,
-        stage: 'Initializing production swap...',
+        stage: 'Initializing atomic cross-chain swap...',
         fromChain: order.direction === 'ETH_TO_XLM' ? 'ethereum' : 'stellar',
         toChain: order.direction === 'ETH_TO_XLM' ? 'stellar' : 'ethereum',
         amount: order.fromAmount,
         retryCount: 0,
       });
 
-      // Security checks
+      console.log('🚀 Production Atomic Swap Initiated:', {
+        direction: order.direction,
+        amount: order.fromAmount,
+        destination: order.toAccount,
+        timestamp: new Date().toISOString()
+      });
+
+      // Enhanced security checks with atomicity validation
       await performSecurityChecks(order);
       
       updateSwapState({
         progress: 15,
-        stage: 'Security checks completed. Initiating swap...',
+        stage: 'Security validated. Coordinating cross-chain resolvers...',
       });
 
-      // Estimate completion time
+      // Estimate completion time with network conditions
       const estimatedTime = estimateSwapTime(order);
       updateSwapState({ estimatedCompletionTime: Date.now() + estimatedTime });
 
-      // Call production API
+      // Enhanced swap request with atomicity guarantees
       const swapRequest = {
         fromChain: order.direction === 'ETH_TO_XLM' ? 'ethereum' : 'stellar',
         toChain: order.direction === 'ETH_TO_XLM' ? 'stellar' : 'ethereum',
@@ -416,64 +423,122 @@ export function useProductionSwap() {
         partialFillEnabled: order.partial || false,
         fromNetwork: order.direction === 'ETH_TO_XLM' ? 'sepolia' : 'testnet',
         toNetwork: order.direction === 'ETH_TO_XLM' ? 'testnet' : 'sepolia',
+        // Atomicity and security enhancements
+        requireAtomicity: true,
+        secretHashAlgorithm: 'keccak256',
+        bridgeMode: 'htlc_atomic',
+        resolverCoordination: true,
+        networkConfirmations: {
+          ethereum: NETWORK_CONFIGS.ethereum.sepolia.confirmations,
+          stellar: NETWORK_CONFIGS.stellar.testnet.confirmations
+        }
       };
 
+      updateSwapState({
+        progress: 20,
+        stage: 'Connecting to bridge resolvers...',
+      });
+
+      // Initialize swap with enhanced resolver coordination
       const response = await retryWithBackoff(() => 
-        callProductionAPI('/api/v2/swaps', swapRequest)
+        callProductionAPI('/api/v2/atomic-swaps', swapRequest)
       );
+
+      if (!response.swapId) {
+        throw new Error('Bridge failed to generate atomic swap ID');
+      }
 
       updateSwapState({
         id: response.swapId,
         status: 'pending',
         progress: 30,
-        stage: 'Swap initiated. Waiting for network confirmations...',
+        stage: 'Atomic swap initiated. Coordinating resolvers...',
+        transactionHashes: {
+          ethereum: response.ethereumTxHash,
+          stellar: response.stellarTxHash,
+          bridge: response.bridgeTxHash
+        }
       });
 
-      // Subscribe to real-time updates via WebSocket
+      console.log('✅ Atomic Swap Created:', {
+        swapId: response.swapId,
+        ethereumTx: response.ethereumTxHash,
+        stellarTx: response.stellarTxHash,
+        resolvers: response.assignedResolvers?.length || 0
+      });
+
+      // Enhanced WebSocket subscription with resolver updates
       if (wsConnection) {
         wsConnection.send(JSON.stringify({
-          type: 'subscribe',
+          type: 'subscribe_atomic_swap',
           swapId: response.swapId,
+          includeResolverUpdates: true,
+          includeNetworkStatus: true,
+          includeAtomicityChecks: true
         }));
       }
 
-      // Start polling for status updates as fallback
+      // Enhanced polling with atomicity verification
       const pollForUpdates = async () => {
         let attempts = 0;
         const maxAttempts = 120; // 10 minutes with 5-second intervals
         
-        while (attempts < maxAttempts && swapState.status !== 'completed' && swapState.status !== 'failed') {
+        while (attempts < maxAttempts && !['completed', 'failed'].includes(swapState.status)) {
           try {
             const statusResponse = await fetch(
-              `${PRODUCTION_CONFIG.apiBaseUrl}/api/v2/swaps/${response.swapId}`
+              `${PRODUCTION_CONFIG.apiBaseUrl}/api/v2/atomic-swaps/${response.swapId}/status`
             );
             
             if (statusResponse.ok) {
               const statusData = await statusResponse.json();
               const swap = statusData.swap;
               
+              // Enhanced status update with atomicity checks
               updateSwapState({
                 status: swap.status,
                 progress: swap.progress || 50,
-                stage: `Status: ${swap.status}`,
+                stage: swap.stage || `Status: ${swap.status}`,
                 transactionHashes: {
                   ...swapState.transactionHashes,
                   ...swap.transactions,
                 },
               });
+
+              // Log resolver coordination progress
+              if (swap.resolverUpdates) {
+                console.log('🔗 Resolver Updates:', swap.resolverUpdates);
+              }
+
+              // Log atomicity checks
+              if (swap.atomicityStatus) {
+                console.log('🔒 Atomicity Status:', swap.atomicityStatus);
+              }
               
               if (swap.status === 'completed') {
-                updateSwapState({
-                  progress: 100,
-                  stage: 'Cross-chain atomic swap completed successfully!',
-                });
-                
-                addNotification({
-                  type: 'success',
-                  title: `${order.direction.replace('_', ' → ')} Swap Completed! 🎉`,
-                  message: `Successfully swapped ${order.fromAmount} via production bridge`,
-                  persistent: true,
-                });
+                // Final atomicity verification
+                if (swap.atomicityVerified) {
+                  updateSwapState({
+                    progress: 100,
+                    stage: 'Atomic cross-chain swap completed successfully!',
+                  });
+                  
+                  addNotification({
+                    type: 'success',
+                    title: `${order.direction.replace('_', ' → ')} Atomic Swap Completed! 🎉`,
+                    message: `Successfully swapped ${order.fromAmount} with atomicity guaranteed`,
+                    persistent: true,
+                  });
+                  
+                  console.log('✅ Atomic Swap Completed:', {
+                    swapId: response.swapId,
+                    fromTx: swap.transactions?.ethereum || swap.transactions?.stellar,
+                    toTx: swap.transactions?.stellar || swap.transactions?.ethereum,
+                    atomicityVerified: swap.atomicityVerified,
+                    resolversCount: swap.participatingResolvers?.length || 0
+                  });
+                } else {
+                  throw new Error('Swap completed but atomicity could not be verified');
+                }
                 
                 addHistory({
                   ...order,
@@ -484,8 +549,11 @@ export function useProductionSwap() {
                 
                 break;
               } else if (swap.status === 'failed') {
-                throw new Error('Swap failed on the backend');
+                const failureReason = swap.failureReason || 'Unknown bridge error';
+                throw new Error(`Atomic swap failed: ${failureReason}`);
               }
+            } else {
+              console.warn('⚠️ Status check failed, retrying...');
             }
             
             attempts++;
@@ -493,30 +561,45 @@ export function useProductionSwap() {
           } catch (error) {
             console.error('Status polling error:', error);
             attempts++;
+            
+            // Enhanced error handling for resolver issues
+            if (attempts > 30 && attempts % 10 === 0) {
+              console.log(`⏰ Swap monitoring: ${attempts}/120 attempts, continuing...`);
+            }
           }
         }
         
         if (attempts >= maxAttempts) {
-          throw new Error('Swap timeout - please check transaction status manually');
+          throw new Error('Atomic swap timeout - resolvers may need manual intervention');
         }
       };
 
       await pollForUpdates();
 
     } catch (error: any) {
-      console.error('Production swap failed:', error);
+      console.error('🚨 Production atomic swap failed:', error);
       
       updateSwapState({
         status: 'failed',
         errorMessage: error.message,
-        stage: `Swap failed: ${error.message}`,
+        stage: `Atomic swap failed: ${error.message}`,
       });
 
       addNotification({
         type: 'error',
-        title: 'Production Swap Failed',
+        title: 'Atomic Swap Failed',
         message: `Failed: ${error.message}`,
         persistent: true,
+      });
+
+      // Log detailed failure for debugging
+      console.error('💥 Atomic Swap Failure Details:', {
+        direction: order.direction,
+        amount: order.fromAmount,
+        destination: order.toAccount,
+        error: error.message,
+        swapId: swapState.id,
+        timestamp: new Date().toISOString()
       });
     }
   }, [

@@ -478,7 +478,7 @@ contract CrossChainBridge is ReentrancyGuard, Pausable, Ownable {
         require(_swapIds.length <= 100, "Too many swaps");
         
         for (uint256 i = 0; i < _swapIds.length; i++) {
-            validateSwap(_swapIds[i], _merkleRoot, _merkleProofs[i]);
+            this.validateSwap(_swapIds[i], _merkleRoot, _merkleProofs[i]);
         }
     }
     

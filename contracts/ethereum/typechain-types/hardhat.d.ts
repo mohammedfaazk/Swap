@@ -38,6 +38,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
+      name: "CrossChainBridge",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CrossChainBridge__factory>;
+    getContractFactory(
       name: "IPartialFill",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IPartialFill__factory>;
@@ -57,6 +61,10 @@ declare module "hardhat/types/runtime" {
       name: "PartialFillManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PartialFillManager__factory>;
+    getContractFactory(
+      name: "ProductionHTLC",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ProductionHTLC__factory>;
     getContractFactory(
       name: "ResolverRegistry",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -105,6 +113,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
+      name: "CrossChainBridge",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CrossChainBridge>;
+    getContractAt(
       name: "IPartialFill",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -129,6 +142,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.PartialFillManager>;
+    getContractAt(
+      name: "ProductionHTLC",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ProductionHTLC>;
     getContractAt(
       name: "ResolverRegistry",
       address: string | ethers.Addressable,
@@ -175,6 +193,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
+      name: "CrossChainBridge",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CrossChainBridge>;
+    deployContract(
       name: "IPartialFill",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IPartialFill>;
@@ -194,6 +216,10 @@ declare module "hardhat/types/runtime" {
       name: "PartialFillManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PartialFillManager>;
+    deployContract(
+      name: "ProductionHTLC",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ProductionHTLC>;
     deployContract(
       name: "ResolverRegistry",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -242,6 +268,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20>;
     deployContract(
+      name: "CrossChainBridge",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.CrossChainBridge>;
+    deployContract(
       name: "IPartialFill",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -266,6 +297,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PartialFillManager>;
+    deployContract(
+      name: "ProductionHTLC",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ProductionHTLC>;
     deployContract(
       name: "ResolverRegistry",
       args: any[],

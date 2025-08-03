@@ -13,4 +13,5 @@ export interface SwapOrder {
   timestamp?: number;
   txHash?: string;
   swapId?: string;
+  timelock?: number;
 }
