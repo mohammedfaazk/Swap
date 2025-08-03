@@ -57,17 +57,12 @@ export function SwapInterface() {
       } else {
         // Validate Ethereum address with better error handling
         try {
-          // First check if it starts with 0x
-          if (!toAccount.startsWith("0x")) {
-            newErrors.toAccount = "Ethereum address must start with 0x";
-          }
-          // Then check the length
-          else if (toAccount.length !== 42) {
+          if (!ethers.isAddress(toAccount)) {
+            newErrors.toAccount = "Invalid Ethereum address format";
+          } else if (toAccount.length !== 42) {
             newErrors.toAccount = "Ethereum address must be 42 characters";
-          }
-          // Finally check if it's a valid address using ethers
-          else if (!ethers.isAddress(toAccount)) {
-            newErrors.toAccount = "Invalid Ethereum address checksum - Make sure the capitalization is correct";
+          } else if (!toAccount.startsWith("0x")) {
+            newErrors.toAccount = "Ethereum address must start with 0x";
           }
         } catch (ethError) {
           newErrors.toAccount = "Invalid Ethereum address format";
